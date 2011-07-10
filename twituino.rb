@@ -1,9 +1,28 @@
+=begin
+  Copyright (C) 2011  [David Long](http://davejlong.com)
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+=end
+
 require 'rubygems'
 gem 'twitter4r'
 require 'yaml'
 require 'twitter'
 
 CONFIG = YAML::load_file "conf.yml"
+
+@userWhitelist = ['davejlong']
 
 puts CONFIG
 Twitter::Client.configure do |conf|
@@ -16,7 +35,12 @@ end
   :secret => USERCONFIG[:usersecret]
 })
 
-@userWhitelist = ['davejlong']
+def follow_whitelist
+  @userWhitelist.each do |user|
+    user = @client.user user
+    client.friend :add, user
+  end
+end
 
 def every_n_seconds(n)
   loop do
@@ -27,7 +51,7 @@ def every_n_seconds(n)
   end
 end
 
-every_n_seconds(10) do |span|
+every_n_seconds(15) do |span|
   m = @client.messages :received
     startDate = (Time.now-span)
     endDate = Time.now
