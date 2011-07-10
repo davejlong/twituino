@@ -24,15 +24,14 @@ CONFIG = YAML::load_file "conf.yml"
 
 @userWhitelist = ['davejlong']
 
-puts CONFIG
 Twitter::Client.configure do |conf|
-  conf.oauth_consumer_token = APPCONFIG[:oauth_consumer_token]
-  conf.oauth_consumer_secret = APPCONFIG[:oauth_consumer_secret]
+  conf.oauth_consumer_token = CONFIG['app']['oauth_consumer_token']
+  conf.oauth_consumer_secret = CONFIG['app']['oauth_consumer_secret']
 end
 
 @client = Twitter::Client.new(:oauth_access => {
-  :key => USERCONFIG[:userkey],
-  :secret => USERCONFIG[:usersecret]
+  :key => CONFIG['user']['key'],
+  :secret => CONFIG['user']['secret']
 })
 
 def follow_whitelist
