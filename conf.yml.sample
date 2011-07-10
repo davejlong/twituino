@@ -1,0 +1,6 @@
+app:
+	oauth_consumer_token: **your oauth consumer token**
+	oauth_consumer_secret: **your oauth consumer secret**
+user:
+	key: **your user key**
+	secret: **your user secret**
