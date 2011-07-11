@@ -24,20 +24,10 @@ CONFIG = YAML::load_file "conf.yml"
 
 @userWhitelist = ['davejlong']
 
-Twitter::Client.configure do |conf|
-  conf.oauth_consumer_token = CONFIG['app']['oauth_consumer_token']
-  conf.oauth_consumer_secret = CONFIG['app']['oauth_consumer_secret']
-end
-
-@client = Twitter::Client.new(:oauth_access => {
-  :key => CONFIG['user']['key'],
-  :secret => CONFIG['user']['secret']
-})
-
 def follow_whitelist
   @userWhitelist.each do |user|
     user = @client.user user
-    client.friend :add, user
+    @client.friend :add, user
   end
 end
 
@@ -49,6 +39,18 @@ def every_n_seconds(n)
     sleep(interval) if interval > 0
   end
 end
+
+Twitter::Client.configure do |conf|
+  conf.oauth_consumer_token = CONFIG['app']['oauth_consumer_token']
+  conf.oauth_consumer_secret = CONFIG['app']['oauth_consumer_secret']
+end
+
+@client = Twitter::Client.new(:oauth_access => {
+  :key => CONFIG['user']['key'],
+  :secret => CONFIG['user']['secret']
+})
+
+follow_whitelist
 
 every_n_seconds(15) do |span|
   m = @client.messages :received
