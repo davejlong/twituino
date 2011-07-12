@@ -22,16 +22,16 @@ require 'twitter'
 
 CONFIG = YAML::load_file "conf.yml"
 
-@userWhitelist = ['davejlong']
+userWhitelist = ['davejlong']
 
-def follow_whitelist
-  @userWhitelist.each do |user|
+def follow_whitelist whitelist, user
+  whitelist.each do |user|
     user = @client.user user
-    @client.friend :add, user
+    @client.friend :add, user #if !user.friends.include? user
   end
 end
 
-def every_n_seconds(n)
+def every_n_seconds n
   loop do
     before = Time.now
     yield n
@@ -50,19 +50,19 @@ end
   :secret => CONFIG['user']['secret']
 })
 
-follow_whitelist
+follow_whitelist userWhitelist, CONFIG['user']['screenname']
 
 every_n_seconds(15) do |span|
   m = @client.messages :received
     startDate = (Time.now-span)
     endDate = Time.now
-    puts "Checking messages between #{startDate} and #{endDate} \n"
+    puts "Checking messages (#{startDate} and #{endDate}) \n"
 
     m.each do |message|
     if message.created_at > startDate && message.created_at < endDate
       puts "Sender: #{message.sender.screen_name}"
       puts "Message: #{message.text}\r\n"
-      if(@userWhitelist.include? message.sender.screen_name)
+      if(userWhitelist.include? message.sender.screen_name)
         s = @client.status :post, "@#{message.sender.screen_name}, I will '#{message.text}'"
         
         # PUT CODE TO DO SOEMTHING HERE
