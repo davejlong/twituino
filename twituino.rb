@@ -51,25 +51,26 @@ end
   :secret => CONFIG['user']['secret']
 })
 
-sp = SerialPort.new CONFIG['serial']['port'], CONFIG['serial']['baud']
+@sp = SerialPort.new CONFIG['serial']['port'], CONFIG['serial']['baud']
 
 follow_whitelist userWhitelist, CONFIG['user']['screenname']
 
 every_n_seconds(15) do |span|
   m = @client.messages :received
-    startDate = (Time.now-span)
-    endDate = Time.now
-    puts "Checking messages (#{startDate} and #{endDate}) \n"
-
-    m.each do |message|
+  startDate = (Time.now-span)
+  endDate = Time.now
+  puts "Checking messages (#{startDate} and #{endDate}) \n"
+  
+  @sp.write 0 #Make sure the LED is off
+  
+  m.each do |message|
     if message.created_at > startDate && message.created_at < endDate
       puts "Sender: #{message.sender.screen_name}"
       puts "Message: #{message.text}\r\n"
       if(userWhitelist.include? message.sender.screen_name)
-        s = @client.status :post, "@#{message.sender.screen_name}, I will '#{message.text}'"
+        @client.status :post, "@#{message.sender.screen_name}, I will '#{message.text}'"
         
-        sp.write 1 # Write to the serial port
-      else sp.write 0 #Make sure the LED is off
+        @sp.write 1 # Write to the serial port
       end
     end
   end
