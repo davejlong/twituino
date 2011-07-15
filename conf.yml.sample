@@ -15,11 +15,16 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 =end
 
-
-
+# Twitter app settings
 app:
   oauth_consumer_token: **your oauth consumer token**
   oauth_consumer_secret: **your oauth consumer secret**
+# Twitter user Settings
 user:
+  screenname: **username to use**
   key: **your user key**
   secret: **your user secret**
+# Connection settings got Arduino
+serial:
+  baud: 9600
+  port: /dev/tty.usbmodemfd131

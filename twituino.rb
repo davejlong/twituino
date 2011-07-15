@@ -19,15 +19,16 @@ require 'rubygems'
 gem 'twitter4r'
 require 'yaml'
 require 'twitter'
+require 'serialport'
 
 CONFIG = YAML::load_file "conf.yml"
 
 userWhitelist = ['davejlong']
 
 def follow_whitelist whitelist, user
-  whitelist.each do |user|
-    user = @client.user user
-    @client.friend :add, user #if !user.friends.include? user
+  whitelist.each do |friend|
+    user = @client.user friend
+    @client.friend :add, friend #if !user.friends.include? user
   end
 end
 
@@ -50,6 +51,8 @@ end
   :secret => CONFIG['user']['secret']
 })
 
+sp = SerialPort.new CONFIG['serial']['port'], CONFIG['serial']['baud']
+
 follow_whitelist userWhitelist, CONFIG['user']['screenname']
 
 every_n_seconds(15) do |span|
@@ -65,9 +68,8 @@ every_n_seconds(15) do |span|
       if(userWhitelist.include? message.sender.screen_name)
         s = @client.status :post, "@#{message.sender.screen_name}, I will '#{message.text}'"
         
-        # PUT CODE TO DO SOEMTHING HERE
-        # I will add something here when I actually have an Arduino board to test this app out on
-        
+        sp.write 1 # Write to the serial port
+      else sp.write 0 #Make sure the LED is off
       end
     end
   end
