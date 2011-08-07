@@ -51,6 +51,7 @@ end
   :secret => CONFIG['user']['secret']
 })
 
+# Create the serial port connection for Arduino
 @sp = SerialPort.new CONFIG['serial']['port'], CONFIG['serial']['baud']
 
 follow_whitelist userWhitelist, CONFIG['user']['screenname']
